@@ -1,0 +1,6 @@
+Implement a simple game which is bubbgle gun and object should have health bubbles should be populated at the bottom so that object's mobility decrease if it miss bubbles. And if populated height of any of the column of bubbles reach top game is over. Best score should be shown and reset game option should be seen. Score should be based on shooted bubble and hardness level should be chosen such that arising of bubbles should be regulated based on hardness level
+Object should be placed at the bottom and bubbles should propgate down from top to bottom
+Can you please make size of random between two acceptable sizes and also maybe you can change logic for finishing game logic
+there is bug gaming over logic it overs earlier i dont understand make overing logic such that health of the object reaches to zero object health should be seen at near like bar. And also falling bubles should also be shooting please
+gaming logic should be barely on health reaches to zero barely. Plase rearrange it also health bard should be out of game frame but neax to screen vertically
+After some point bubbles are not shooting the object why at inital they are shooting but then not and also they might be more offensive
