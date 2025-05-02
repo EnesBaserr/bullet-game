@@ -4,3 +4,24 @@ Can you please make size of random between two acceptable sizes and also maybe y
 there is bug gaming over logic it overs earlier i dont understand make overing logic such that health of the object reaches to zero object health should be seen at near like bar. And also falling bubles should also be shooting please
 gaming logic should be barely on health reaches to zero barely. Plase rearrange it also health bard should be out of game frame but neax to screen vertically
 After some point bubbles are not shooting the object why at inital they are shooting but then not and also they might be more offensive
+I would like to add sound when bubble is destroyed and also "Game Over" sound. This way, it applies the “Feedback” principle. Audio cues make the interface feel more responsive and immersive. Use the HTML <audio> element and play sounds with new Audio('sound.mp3').play() on events.
+I also want to implement that Color-Blind Friendly Mode. Add toggle button for alternative high-contrast or pattern-based color scheme for bubbles and bullets. This applies “Accessibility” and “User Preference”. Not everyone can distinguish red from green.
+- I would like to add Tutorial or “How to Play” Popup
+    A modal or overlay that shows
+    How to move
+    How to shoot
+    What bubbles and bullets do
+    What the difficulty means
+    This applies “Help and Documentation”. Users shouldn’t guess how to interact.
+
+-I also want to add  Keyboard Controls
+    Use left/right arrows or A/D to move
+    Spacebar or Enter to shoot
+    This applies “Multiple Modes of Input” — improves efficiency and accessibility, e.g., for players with motor impairments.
+- I want to add . Post-Game Feedback Summary
+    When game ends, show:
+    Final score
+    Accuracy (% of shots that hit)
+    Bubbles destroyed
+    Time survived
+    This applies “Feedback and Evaluation” and helps users reflect on their performance.
