@@ -29,14 +29,14 @@
         position: absolute;
         width: 40px;
         height: 40px;
-        background-color: #ff4444;
+        background-color: #58c06d;
         border-radius: 50%;
         cursor: pointer;
       }
 
       .bubble {
         position: absolute;
-        background-color: #44ff44;
+        background-color: #fcfcfc;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -50,7 +50,7 @@
         position: absolute;
         width: 10px;
         height: 10px;
-        background-color: yellow;
+        background-color: rgb(176, 27, 112);
         border-radius: 50%;
       }
 
@@ -136,8 +136,41 @@
         position: absolute;
         width: 8px;
         height: 8px;
-        background-color: #ff6666;
+        background-color: #bbc320;
         border-radius: 50%;
+      }
+      .modal {
+        display: none; /* Hidden by default */
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.8);
+      }
+
+      .modal-content {
+        background-color: #222;
+        margin: 10% auto;
+        padding: 20px;
+        border: 2px solid #444;
+        width: 50%;
+        color: white;
+        border-radius: 10px;
+      }
+
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 30px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .close:hover {
+        color: white;
       }
     </style>
   </head>
@@ -148,7 +181,10 @@
         <option value="medium">Medium</option>
         <option value="hard">Hard</option>
       </select>
+      <button onclick="openTutorial()">❓</button>
       <button onclick="resetGame()">Reset Game</button>
+      <button onclick="togglePause()">⏸️ </button>
+      <button onclick="toggleColorBlindMode()">Toggle Color-Blind Mode</button>
       <div id="score">Score: 0</div>
       <div id="bestScore">Best Score: 0</div>
     </div>
@@ -157,13 +193,36 @@
       <div id="healthBar"><div id="healthFill"></div></div>
     </div>
     <div id="gameContainer">
+      <audio id="bubblePopSound" src="buble_pop.mp3"></audio>
+      <audio id="gameOverSound" src="game_over.mp3"></audio>
       <div id="gun"></div>
       <div id="gameOver">
         <h2>Game Over!</h2>
         <p>Final Score: <span id="finalScore">0</span></p>
+        <p id="accuracy">Accuracy: 0%</p>
+        <p id="bubblesDestroyed">Bubbles Destroyed: 0</p>
+        <p id="timeSurvived">Time Survived: 0 sec</p>
         <button onclick="resetGame()">Play Again</button>
       </div>
     </div>
+    <div id="tutorialModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeTutorial()">&times;</span>
+        <h2>How to Play</h2>
+        <ul>
+          <li><b>Move:</b> Move your mouse left and right to control the gun.</li>
+          <li><b>Shoot:</b> Click anywhere inside the game area to fire bullets upwards.</li>
+          <li><b>Objective:</b> Destroy falling bubbles before they stack up or shoot you!</li>
+          <li><b>Enemy Bullets:</b> Bubbles randomly shoot at you. Avoid getting hit!</li>
+          <li><b>Difficulty:</b> "Easy" = slower enemies, "Hard" = faster and more bullets!</li>
+          <li><b>Health:</b> If your health drops to 0, it's game over.</li>
+          <li><b>Keyboard Controls:</b> Use ←/→ or A/D to move, and Space/Enter to shoot.</li>
+          <li><b>Special:</b> You can toggle Color-Blind Mode for better accessibility!</li>
+        </ul>
+        <p>Good Luck and have fun!</p>
+      </div>
+    </div>
+    
 
     <script>
       const gameContainer = document.getElementById("gameContainer");
@@ -174,6 +233,10 @@
       const gameOverScreen = document.getElementById("gameOver");
       const finalScoreElement = document.getElementById("finalScore");
       const healthBar = document.getElementById("healthFill");
+      const bubblePopSound = document.getElementById("bubblePopSound");
+      const gameOverSound = document.getElementById("gameOverSound");
+      
+
 
       let score = 0;
       let bestScore = 0;
@@ -185,7 +248,11 @@
       let bubbleSpeed = 0.5;
       let bubbleSpawnRate = 2000;
       let lastBubbleSpawn = 0;
-
+      let totalShots = 0;
+      let bubblesHit = 0;
+      let gameStartTime;
+      let colorBlindMode = false;
+      let paused = false;
       // Initialize gun position - now at bottom
       gun.style.left = "380px";
       gun.style.top = gameContainer.offsetHeight - 60 + "px";
@@ -196,13 +263,47 @@
         medium: { speed: 0.7, spawnRate: 900, bulletSpeed: 5 },
         hard: { speed: 0.8, spawnRate: 500, bulletSpeed: 7 },
       };
-
+      function toggleColorBlindMode() {
+        colorBlindMode = !colorBlindMode;
+        bubbles.forEach(updateBubbleColor); // Update all existing bubbles
+      }
+      function togglePause() {
+        paused = !paused;
+        if (!paused) {
+          requestAnimationFrame(updateGame);
+        }
+      }
       function updateDifficulty() {
         const difficulty = difficulties[difficultySelect.value];
         bubbleSpeed = difficulty.speed;
         bubbleSpawnRate = difficulty.spawnRate;
       }
+      function updateBubbleColor(bubble) {
+        if (colorBlindMode) {
+            bubble.element.style.backgroundColor = "#1E90FF"; // Color-blind safe color
+        } else {
+            bubble.element.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 50%)`;
+        }
+      }
+      function openTutorial() {
+        paused = true;
+        document.getElementById("tutorialModal").style.display = "block";
+      }
 
+      function closeTutorial() {
+        
+        document.getElementById("tutorialModal").style.display = "none";
+        paused = false;
+        requestAnimationFrame(updateGame);
+      }
+
+      // Optional: Close modal if user clicks outside content
+      window.addEventListener("click", (event) => {
+        const modal = document.getElementById("tutorialModal");
+        if (event.target == modal) {
+          closeTutorial();
+        }
+      });
       difficultySelect.addEventListener("change", updateDifficulty);
 
       // Gun movement
@@ -230,7 +331,27 @@
           shoot();
         }
       });
+      document.addEventListener("keydown", (e) => {
+        if (gameIsOver) return;
 
+        const gunLeft = parseInt(gun.style.left);
+        const step = 30; // how far to move left/right with each keypress
+
+        if (e.key === "ArrowLeft" || e.key.toLowerCase() === "a") {
+          const newLeft = Math.max(0, gunLeft - step);
+          gun.style.left = newLeft + "px";
+        }
+
+        if (e.key === "ArrowRight" || e.key.toLowerCase() === "d") {
+          const newLeft = Math.min(gameContainer.offsetWidth - gun.offsetWidth, gunLeft + step);
+          gun.style.left = newLeft + "px";
+        }
+
+        if (e.key === " " || e.key === "Enter") {
+          shoot(); // fire bullet
+          e.preventDefault(); // avoid page scrolling with spacebar
+        }
+      });
       function shoot() {
         const bullet = document.createElement("div");
         bullet.className = "bullet";
@@ -243,6 +364,7 @@
           x: parseInt(bullet.style.left),
           y: parseInt(bullet.style.top),
         });
+        totalShots++;
       }
 
       // Add size constants
@@ -269,7 +391,11 @@
         bubble.style.left =
           column * columnWidth + (columnWidth - size) / 2 + "px";
         bubble.style.top = "0px";
-        bubble.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 50%)`;
+        if (colorBlindMode) {
+            bubble.style.backgroundColor = "#1E90FF"; // Dodger Blue for color-blind safe
+        } else {
+            bubble.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 50%)`;
+        }
 
         const health = Math.floor(Math.random() * 3) + 1;
         bubble.textContent = health;
@@ -343,7 +469,7 @@
       }
 
       function updateGame() {
-        if (gameIsOver) return;
+        if (paused || gameIsOver) return;
 
         // Spawn new bubbles
         const now = Date.now();
@@ -445,9 +571,11 @@
               bubble.health--;
               bubble.element.textContent = bubble.health;
               if (bubble.health <= 0) {
+                bubblePopSound.play();
                 bubble.element.remove();
                 bubbles.splice(bubbleIndex, 1);
                 score += 10;
+                bubblesHit++;
                 scoreElement.textContent = `Score: ${score}`;
               }
             }
@@ -485,11 +613,18 @@
 
       function gameOver() {
         gameIsOver = true;
+        gameOverSound.play();
         gameOverScreen.style.display = "block";
         finalScoreElement.textContent = score;
+        const accuracy = totalShots > 0 ? ((bubblesHit / totalShots) * 100).toFixed(1) : 0;
+        const timeSurvived = ((Date.now() - gameStartTime) / 1000).toFixed(1);
+        document.getElementById("accuracy").textContent = `Accuracy: ${accuracy}%`;
+        document.getElementById("bubblesDestroyed").textContent = `Bubbles Destroyed: ${bubblesHit}`;
+        document.getElementById("timeSurvived").textContent = `Time Survived: ${timeSurvived} sec`;
         if (score > bestScore) {
           bestScore = score;
           bestScoreElement.textContent = `Best Score: ${bestScore}`;
+          
         }
       }
 
@@ -497,6 +632,9 @@
         gameIsOver = false;
         gameOverScreen.style.display = "none";
         score = 0;
+        gameStartTime = Date.now();
+        totalShots = 0;
+        bubblesHit = 0;
         scoreElement.textContent = `Score: ${score}`;
         playerHealth = 100;
         updateHealthBar();
