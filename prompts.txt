@@ -25,3 +25,4 @@ I also want to implement that Color-Blind Friendly Mode. Add toggle button for a
     Bubbles destroyed
     Time survived
     This applies “Feedback and Evaluation” and helps users reflect on their performance.
+- Implement functionality such that a user can disable or activate sound effect with settings popup
