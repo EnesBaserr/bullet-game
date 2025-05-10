@@ -223,8 +223,9 @@
       <button onclick="openTutorial()">❓</button>
       <button onclick="resetGame()">Reset Game</button>
       <button onclick="togglePause()">⏸️</button>
-      <button onclick="toggleColorBlindMode()">Toggle Color-Blind Mode</button>
+      <button onclick="toggleColorBlindMode()">Color-Blind Mode</button>
       <button onclick="openSettings()">Settings</button>
+      <button onclick="toggleFullscreen()">Fullscreen⛶</button>
     </div>
     <div id="statusBar">
       <div id="healthContainer">
@@ -296,7 +297,11 @@
         </label>
       </div>
     </div>
-
+    <div id="startScreen" style="position: fixed; inset: 0; background: #111; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;">
+      <h1>Bubble Gun Game</h1>
+      <p>Click below to start in fullscreen mode</p>
+      <button onclick="startGame()" style="padding: 15px 30px; font-size: 18px;">Start Game</button>
+    </div>
     <script>
       const gameContainer = document.getElementById("gameContainer");
       const gun = document.getElementById("gun");
@@ -345,6 +350,28 @@
           requestAnimationFrame(updateGame);
         }
       }
+      function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch((err) => {
+            alert(`Error entering fullscreen: ${err.message}`);
+          });
+        } else {
+          document.exitFullscreen();
+        }
+      }
+
+      function startGame() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().then(() => {
+            document.getElementById("startScreen").style.display = "none";
+            paused = false;
+            requestAnimationFrame(updateGame);
+          }).catch((err) => {
+            alert(`The game can only be played in fullscreen mode. Please switch to the fullscreen mode.: ${err.message}`);
+          });
+        }
+      }
+
       function updateDifficulty() {
         const difficulty = difficulties[difficultySelect.value];
         bubbleSpeed = difficulty.speed;
@@ -413,6 +440,20 @@
             Math.min(gameContainer.offsetWidth - gun.offsetWidth, x)
           ) + "px";
       });
+      document.addEventListener("fullscreenchange", () => {
+        if (!document.fullscreenElement) {
+          // Tam ekran kapandıysa oyunu durdur
+          paused = true;
+
+          // Kullanıcıya bilgi göster
+          alert("The game can only be played in fullscreen mode. Please switch to the fullscreen mode.");
+        } else {
+          // Tam ekrana geri dönüldüğünde oyunu başlat
+          paused = false;
+          requestAnimationFrame(updateGame);
+        }
+      });
+      
 
       // Shooting
       document.addEventListener("click", (e) => {
@@ -775,7 +816,8 @@
 
       // Start the game
       updateDifficulty();
-      requestAnimationFrame(updateGame);
+      paused = true; // wait until user clicks start
+      //requestAnimationFrame(updateGame);
     </script>
   </body>
 </html>
