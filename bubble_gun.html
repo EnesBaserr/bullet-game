@@ -185,6 +185,7 @@
       <button onclick="resetGame()">Reset Game</button>
       <button onclick="togglePause()">⏸️ </button>
       <button onclick="toggleColorBlindMode()">Toggle Color-Blind Mode</button>
+      <button onclick="toggleFullScreen()">🔳 Fullscreen</button>
       <div id="score">Score: 0</div>
       <div id="bestScore">Best Score: 0</div>
     </div>
@@ -253,6 +254,7 @@
       let gameStartTime;
       let colorBlindMode = false;
       let paused = false;
+      gameStartTime = Date.now();
       // Initialize gun position - now at bottom
       gun.style.left = "380px";
       gun.style.top = gameContainer.offsetHeight - 60 + "px";
@@ -308,7 +310,7 @@
 
       // Gun movement
       document.addEventListener("mousemove", (e) => {
-        if (gameIsOver) return;
+        if (gameIsOver || paused) return;
         const rect = gameContainer.getBoundingClientRect();
         const x = e.clientX - rect.left - gun.offsetWidth / 2;
         gun.style.left =
@@ -320,7 +322,7 @@
 
       // Shooting
       document.addEventListener("click", (e) => {
-        if (gameIsOver) return;
+        if (gameIsOver || paused) return;
         const rect = gameContainer.getBoundingClientRect();
         if (
           e.clientX >= rect.left &&
@@ -332,7 +334,7 @@
         }
       });
       document.addEventListener("keydown", (e) => {
-        if (gameIsOver) return;
+        if (gameIsOver|| paused) return;
 
         const gunLeft = parseInt(gun.style.left);
         const step = 30; // how far to move left/right with each keypress
@@ -625,6 +627,15 @@
           bestScore = score;
           bestScoreElement.textContent = `Best Score: ${bestScore}`;
           
+        }
+      }
+      function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(err => {
+            alert(`Error attempting to enable full-screen mode: ${err.message}`);
+          });
+        } else {
+          document.exitFullscreen();
         }
       }
 
