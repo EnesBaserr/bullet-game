@@ -152,29 +152,53 @@ The game is built using vanilla web technologies without external dependencies:
 - CSS transitions for smooth animations
 - Event handling for user input
 
-## Future Improvements
+## ChatGPT Prompts Used
 
-Potential enhancements for future versions:
+During the development of the Bubble Gun Game, ChatGPT was used to accelerate feature design, fix bugs, and align the implementation with core HCI principles. Below is a categorized summary of the prompts used throughout the development process:
 
-1. **Gameplay Features**:
+### A. Initial Game Mechanics and Core Structure
 
-- Power-ups and special abilities
-- Different bubble types
-- Multiple weapon types
-- Level progression system
+- **“Implement a simple game which is bubble gun…”**  
+  Requested basic shooting mechanics where the player controls a gun at the bottom of the screen and bubbles fall from the top. Prompted the development of core loop logic, bubble generation, and object control.
 
-2. **Technical Improvements**:
+- **“Objects should have health, and bubbles should be populated at the bottom…”**  
+  Introduced health-based logic for both the player and bubbles, with game over triggered by bubble stacking or health depletion.
 
-- Sound effects and background music
-- Mobile device support
-- Local multiplayer
-- Online leaderboard
+- **“Score should be based on shot bubbles and should depend on difficulty.”**  
+  Guided the development of a dynamic scoring system and difficulty-based bubble behavior.
 
-3. **Performance Optimizations**:
+- **“Best score should be shown and reset option should be included.”**  
+  Informed the implementation of persistent best score tracking via local storage and a reset button in the UI.
 
-- Object pooling for bullets
-- Optimized collision detection
-- Improved particle effects
+### B. Bug Fixing and Game Logic Corrections
+
+- **“There is a bug — game over logic triggers too early…”**  
+  Helped correct early termination issues by refining game over logic based solely on player health reaching zero.
+
+- **“Health bar should be outside the game frame and shown vertically…”**  
+  Improved visual clarity and game aesthetics by placing the health indicator outside the active play area.
+
+- **“After some point, bubbles are not shooting anymore…”**  
+  Prompted the addition of cooldown timers and randomness to bubble shooting logic to ensure continuous challenge.
+
+### C. UX, Sound, and Visual Feedback
+
+- **“I want to add sound when a bubble is destroyed and a game over sound.”**  
+  Enhanced feedback using HTML5 `<audio>` elements, improving immersion and responsiveness of game events.
+
+- **“Please add color-blind friendly mode — a toggle for high contrast bubbles.”**  
+  Introduced accessibility features through a dedicated toggle button to switch between standard and color-blind safe visuals.
+
+### D. User Interaction and HCI-Oriented Additions
+
+- **“I want to add a tutorial or ‘How to Play’ popup.”**  
+  Helped implement a modal explaining gameplay mechanics, controls, and difficulty levels — supporting the “Help and Documentation” principle.
+
+- **“Add keyboard controls (A/D or arrows for movement, space/enter for shooting).”**  
+  Enabled multi-modal input for improved accessibility and player preference.
+
+- **“Show post-game feedback summary with accuracy, time survived, and bubbles destroyed.”**  
+  Informed the design of a results screen for self-assessment, reinforcing the “Feedback and Evaluation” principle.
 
 ## HCI Principles Applied
 
