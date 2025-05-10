@@ -18,7 +18,7 @@
       #gameContainer {
         position: relative;
         width: 800px;
-        height: 600px;
+        height: 550px;
         border: 2px solid #444;
         background-color: #000;
         overflow: hidden;
@@ -92,45 +92,50 @@
         display: none;
       }
 
-      #score,
-      #bestScore {
-        font-size: 20px;
-        margin: 10px;
+      #statusBar {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        width: 800px;
+        margin-top: 10px;
+        padding: 0 10px;
+        background-color: #222;
+        border: 2px solid #444;
+        border-radius: 5px;
+        height: 50px;
       }
 
       #healthContainer {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        margin-left: 410px; /* Half of game container width (800px/2) + some spacing */
-        top: 20px;
-        width: 200px;
         display: flex;
-        flex-direction: column;
         align-items: center;
-        gap: 5px;
-      }
-
-      #healthLabel {
-        color: white;
-        font-size: 16px;
-        margin-bottom: 5px;
+        gap: 10px;
       }
 
       #healthBar {
-        position: relative;
-        width: 200px;
-        height: 20px;
+        width: 250px;
+        height: 26px;
         background-color: #333;
-        border: 2px solid #444;
+        border: 1px solid #555;
+        border-radius: 4px;
+        overflow: hidden;
       }
 
       #healthFill {
-        width: 100%;
         height: 100%;
+        width: 100%;
         background-color: #4caf50;
         transition: width 0.3s;
       }
+
+      #scorePanel {
+        text-align: right;
+      }
+
+      #score, #bestScore {
+        margin: 0;
+        font-size: 16px;
+      }
+
 
       .enemyBullet {
         position: absolute;
@@ -219,14 +224,18 @@
       <button onclick="resetGame()">Reset Game</button>
       <button onclick="togglePause()">⏸️</button>
       <button onclick="toggleColorBlindMode()">Toggle Color-Blind Mode</button>
-      <button onclick="toggleFullScreen()">🔳 Fullscreen</button>
-      <div id="score">Score: 0</div>
-      <div id="bestScore">Best Score: 0</div>
+      <button onclick="openSettings()">Settings</button>
     </div>
-    <div id="healthContainer">
-      <div id="healthLabel">Health</div>
-      <div id="healthBar"><div id="healthFill"></div></div>
-    </div>
+    <div id="statusBar">
+      <div id="healthContainer">
+        <div id="healthLabel">Health</div>
+        <div id="healthBar"><div id="healthFill"></div></div>
+      </div>
+      <div id="scorePanel">
+        <div id="score">Score: 0</div>
+        <div id="bestScore">Best Score: 0</div>
+      </div>
+    </div>    
     <div id="gameContainer">
       <audio id="bubblePopSound" src="buble_pop.mp3"></audio>
       <audio id="gameOverSound" src="game_over.mp3"></audio>
@@ -315,11 +324,11 @@
       let gameStartTime;
       let colorBlindMode = false;
       let paused = false;
-      gameStartTime = Date.now();
+      let soundEnabled = true;
       // Initialize gun position - now at bottom
       gun.style.left = "380px";
       gun.style.top = gameContainer.offsetHeight - 60 + "px";
-
+      gameStartTime = Date.now();
       // Update difficulty settings to include shooting parameters
       const difficulties = {
         easy: { speed: 0.2, spawnRate: 3500, bulletSpeed: 1 },
@@ -362,11 +371,14 @@
       }
 
       function openSettings() {
+        paused = true;  
         document.getElementById("settingsModal").style.display = "block";
       }
 
       function closeSettings() {
+        paused = false;
         document.getElementById("settingsModal").style.display = "none";
+        requestAnimationFrame(updateGame); // ✅ Add this line
       }
 
       document
@@ -392,7 +404,7 @@
 
       // Gun movement
       document.addEventListener("mousemove", (e) => {
-        if (gameIsOver || paused) return;
+        if (gameIsOver|| paused) return;
         const rect = gameContainer.getBoundingClientRect();
         const x = e.clientX - rect.left - gun.offsetWidth / 2;
         gun.style.left =
@@ -404,7 +416,7 @@
 
       // Shooting
       document.addEventListener("click", (e) => {
-        if (gameIsOver || paused) return;
+        if (gameIsOver|| paused) return;
         const rect = gameContainer.getBoundingClientRect();
         if (
           e.clientX >= rect.left &&
@@ -721,16 +733,6 @@
         if (score > bestScore) {
           bestScore = score;
           bestScoreElement.textContent = `Best Score: ${bestScore}`;
-          
-        }
-      }
-      function toggleFullScreen() {
-        if (!document.fullscreenElement) {
-          document.documentElement.requestFullscreen().catch(err => {
-            alert(`Error attempting to enable full-screen mode: ${err.message}`);
-          });
-        } else {
-          document.exitFullscreen();
         }
       }
 
