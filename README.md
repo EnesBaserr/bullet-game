@@ -1,37 +1,13 @@
-# Bubble Gun Game Documentation
+# Bubble Gun Game Project Report - CMPE496 HW-3
+
+## Contributors
+
+- Yasin Atlı - 2020400246
+- Enes Başer - 2020400141
 
 ## 1. Application Description
 
-The Bubble Gun Game is an interactive browser-based game where players control a gun at the bottom of the screen and must defend against falling bubbles. The game incorporates various gameplay mechanics and features:
-
-### Core Features:
-
-- Player-controlled gun at the bottom of the screen
-- Falling bubbles with varying health points
-- Shooting mechanics for both player and bubbles
-- Health system for the player
-- Heat management system for the gun
-- Difficulty levels
-- Score tracking with best score persistence
-- Theme switching (Dark/Light mode)
-
-### Game Mechanics:
-
-- **Gun Control**: Mouse-controlled movement along the bottom of the screen
-- **Shooting**: Click to shoot, limited by heat management system
-- **Heat System**:
-  - 10 shots before overheating
-  - Visual feedback through heat bar
-  - Automatic cooldown mechanism
-- **Bubble Behavior**:
-  - Random sizes between 25-40 pixels
-  - Multiple health points (1-3)
-  - Shoot at player with increasing frequency based on proximity
-- **Health System**: Player health decreases when hit by bubble projectiles
-- **Difficulty Levels**:
-  - Easy: Slower bubbles, lower shooting frequency
-  - Medium: Moderate speed and shooting frequency
-  - Hard: Faster bubbles, higher shooting frequency
+Bubble Gun is an interactive web-based game where players aim to pop bubbles using a virtual gun. The game is designed to provide an engaging and fun experience while incorporating key principles of Human-Computer Interaction (HCI). Players can choose difficulty levels, track their scores, and enjoy sound effects for a more immersive experience. The game also includes accessibility features such as a color-blind friendly mode and multiple input methods.
 
 ## 2. Design and Implementation
 
